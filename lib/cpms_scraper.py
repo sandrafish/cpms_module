@@ -49,6 +49,7 @@ def fetch_index_pages():
     # Alternatively, you might want to always download, say, the current and most recent years.
     # Might be overkill, but something to consider if you need to check regularly for updates (including the prior year
     # on the (possibly faulty) assumption that at the start of a year, there might be adjustments to prior year's appropriations).
+    #NOTE: Below index limits the code to current year (2015 as of this writing). Delete the index [-1] to get all years, or customize as needed.
     for year in years[-1:]:
         try:
             cache_page = cached_index_page_path(cache_dir, year)
