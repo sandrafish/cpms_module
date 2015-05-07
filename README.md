@@ -1,6 +1,6 @@
 ## Overview
 
-This is an effort at getting data from the State of New Mexico's [Capital Approriations][http://cpms.dfa.state.nm.us/].
+This is an effort at getting data from the State of New Mexico's [Capital Approriations Search](http://cpms.dfa.state.nm.us/).
 
 Data is tucked away in "detail" pages such as this one: http://cpms.dfa.state.nm.us/doShowAppropriations.aspx?pid=10-1100
 
