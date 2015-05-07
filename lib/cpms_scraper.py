@@ -1,8 +1,27 @@
 #!/usr/bin/env python
+"""
+Download data pages from New Mexico Capital Appropriations Search Site: 
+
+    http://cpms.dfa.state.nm.us/
+
+USAGE:
+
+    # To download data pages for all years
+    python lib/cpms_scraper.py
+
+    # To download data page for a single year
+    python lib/cpms_scraper.py 2015
+
+    # To download data page for multiple years
+    python lib/cpms_scraper.py 2014,2015
+
+"""
 import os
 import re
+import sys
 import time
 import urllib2
+
 import requests
 from bs4 import BeautifulSoup
 
@@ -21,24 +40,36 @@ from bs4 import BeautifulSoup
 # If nothing else, perhaps there are a few bits you'll find useful.
 
 
-####  Partially implemented code for above strategy ####
-
 # Use a top-level "main" function to quarterback the script by invoking
 # task-specific functions, defined below. The "main" function is invoked
 # at bottom of script.
 def main():
-    index_pages = fetch_index_pages()
+    "Get years, if any, as command-line option"
+    target_years = get_target_years()
+    index_pages = fetch_index_pages(target_years)
     detail_page_links = scrape_detail_page_links(index_pages)
     download_detail_pages(detail_page_links)
 
-# This function will save pages locally to cache and return list of page content as raw html strings
-def fetch_index_pages():
+def get_target_years():
+    " Process year filter from command-line, if any"
+    try:
+        years = [year.strip()[2:] for year in sys.argv[1].split(',')]
+    except IndexError:
+        years = []
+    return years
+
+def fetch_index_pages(target_years):
+    " Save pages locally to cache and return list of page content as raw html strings"
     # Fetch search page as string using "requests" library
     search_page_url = "http://cpms.dfa.state.nm.us/"
     # Extract the available years from the page (this is intended to future-proof the script)
     search_page_html = requests.get(search_page_url).content
-    # We tuck away the unsightly code for plucking out year options in yet another function...
-    years = scrape_year_options(search_page_html)
+    # Give preference to year(s) specified on command-line
+    if target_years:
+        years = target_years
+    else:
+        # We tuck away the unsightly code for plucking out year options in yet another function...
+        years = scrape_year_options(search_page_html)
 
     # We'll use the cache dir downstream to stash downloaded pages
     cache_dir = create_cache_directory()
@@ -49,8 +80,7 @@ def fetch_index_pages():
     # Alternatively, you might want to always download, say, the current and most recent years.
     # Might be overkill, but something to consider if you need to check regularly for updates (including the prior year
     # on the (possibly faulty) assumption that at the start of a year, there might be adjustments to prior year's appropriations).
-    #NOTE: Below index limits the code to current year (2015 as of this writing). Delete the index [-1] to get all years, or customize as needed.
-    for year in years[-1:]:
+    for year in years:
         try:
             cache_page = cached_index_page_path(cache_dir, year)
             html = open(cache_page, 'rb').read()
@@ -77,12 +107,11 @@ def scrape_year_options(search_page_html):
     return years
 
 def create_cache_directory():
-    # Create a hidden, local cache directory
-    # We need the error handling in case the directory already exists
-    # (there is a more complex/professional way to do this, but this gets the job done for our purposes)
     # NOTE: we'll put the cache dir in the top-level directory (above lib/)
     top_level_dir = os.path.abspath(os.path.join(os.path.realpath(__file__), '../..')) 
     cache_dir = os.path.join(top_level_dir, '.cache')
+    # We need the error handling in case the directory already exists
+    # (there is a more complex/professional way to do this, but this gets the job done for our purposes)
     try:
         os.makedirs(cache_dir)
     except OSError:
@@ -152,14 +181,3 @@ def cached_detail_page_path(cache_dir, page_id):
 
 if __name__ == '__main__':
     main()
-
-# ORIGINAL CODE (with some suggested tweaks)
-#for i in xrange(1100, 1322):
-#    #TODO: Add a time.sleep(1) call to stagger the scrape by 1 second. Another way to be friendly to their server(s).
-#    try:
-#        #TODO: Use a function to check if file is stored locally, and if not, download and store locally (as described above)
-#        page = urllib2.urlopen('file:cpms/doShowAppropriations.aspx?pid=10-{}'.format(i))
-#    except:
-#        continue
-#    else:
-#        soup = BeautifulSoup(page.read())
