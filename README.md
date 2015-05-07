@@ -4,4 +4,6 @@ The pages have been downloaded to local files. Trying to retrieve five years of 
 
 There are odd breaks in the HTML, so trying to parse it in four steps/files.
 
-Annotations 
+Comments in files indicate issues.
+
+But probably going about this entirely the wrong way.
