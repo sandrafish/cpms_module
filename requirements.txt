@@ -1,0 +1,6 @@
+beautifulsoup4==4.3.2
+gnureadline==6.3.3
+ipdb==0.8
+ipython==3.1.0
+lxml==3.4.4
+wsgiref==0.1.2
