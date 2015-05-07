@@ -19,6 +19,6 @@ for row in table.findAll('tr')[24:]:
     #print value
     data[key] = value
     print data
-    record = (id, value)
+    record = (id, key, value)
     writer = csv.writer(open('cpms3.csv', 'ab'))
     writer.writerow(record)
