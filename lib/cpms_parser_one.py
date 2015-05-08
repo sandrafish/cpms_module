@@ -18,9 +18,9 @@ data = {}
 for row in table.findAll('tr')[3:]:
     #this works, tho it doesn't get the first row (year) where there's a weird image spacer thing between two tds 
     cells = row.findAll('td')
-    key = cells[0].string
+    key = cells[0].text.strip()
     #the following throws a list index out of range error, but gets the stuff
-    value = cells[1].string
+    value = cells[1].text.strip()
     data[key] = value
     print data
     record = (id, key, value)
