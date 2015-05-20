@@ -2,7 +2,6 @@
 from bs4 import BeautifulSoup
 import urllib2
 import csv 
-import re
 
 #these ranges need to be changed for each year 
 for i in xrange(1100, 1322):
@@ -19,7 +18,10 @@ for i in xrange(1100, 1322):
         for row in rows:
             cols = row.findAll('td')
             cells = [ele.text.strip() for ele in cols]
-            data = ([ele for ele in cells if ele]) # Get rid of empty values
+            # Get rid of empty values
+            data = ([ele for ele in cells if ele]) 
+            # add the id no. at the beginning
+            data.insert(0, i)
             #print data
             record = (data)
             writer = csv.writer(open('cpms10.csv', 'ab'))
